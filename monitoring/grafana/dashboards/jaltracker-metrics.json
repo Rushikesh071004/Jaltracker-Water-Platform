@@ -1,0 +1,171 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "System & JVM Health",
+      "type": "row"
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 7, "w": 8, "x": 0, "y": 1 },
+      "title": "JVM Memory Usage (Heap & Non-Heap)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "Heap Used (MB)"
+        },
+        {
+          "expr": "jvm_memory_max_bytes{area=\"heap\"} / 1024 / 1024",
+          "legendFormat": "Heap Max (MB)"
+        },
+        {
+          "expr": "jvm_memory_used_bytes{area=\"nonheap\"} / 1024 / 1024",
+          "legendFormat": "Non-Heap Used (MB)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "custom": {
+            "fillOpacity": 15,
+            "lineWidth": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 7, "w": 8, "x": 8, "y": 1 },
+      "title": "CPU Usage (Process vs System)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "process_cpu_usage * 100",
+          "legendFormat": "JALTRACKER Process CPU %"
+        },
+        {
+          "expr": "system_cpu_usage * 100",
+          "legendFormat": "Host System CPU %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 7, "w": 8, "x": 16, "y": 1 },
+      "title": "Active Database Connections (HikariCP)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active",
+          "legendFormat": "Active Connections"
+        },
+        {
+          "expr": "hikaricp_connections_idle",
+          "legendFormat": "Idle Connections"
+        },
+        {
+          "expr": "hikaricp_connections_max",
+          "legendFormat": "Max Pool Limit"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "lineWidth": 2
+          }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 8 },
+      "id": 5,
+      "title": "HTTP Request Traffic & Latencies",
+      "type": "row"
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 9 },
+      "title": "API Request Throughput (Req/Sec by URI)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count[1m])) by (uri)",
+          "legendFormat": "{{uri}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "fillOpacity": 10,
+            "lineWidth": 2
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 9 },
+      "title": "HTTP Latency (P95 & P99 Response Times)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[1m])) by (le)) * 1000",
+          "legendFormat": "p95 Latency (ms)"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket[1m])) by (le)) * 1000",
+          "legendFormat": "p99 Latency (ms)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "lineWidth": 2
+          }
+        }
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["jaltracker", "water-billing", "spring-boot", "prometheus"],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"]
+  },
+  "timezone": "browser",
+  "title": "JALTRACKER Enterprise Observability",
+  "uid": "jaltracker-obs-01",
+  "version": 1
+}
